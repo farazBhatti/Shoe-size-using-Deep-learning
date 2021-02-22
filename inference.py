@@ -253,4 +253,4 @@ print('length of feet in cm = ', foot_length)
 #print('Point = ', point)
 cv2.destroyAllWindows
 
-cv2.imwrite("side.png",sidePose)
+cv2.imwrite("result/side.png",sidePose)

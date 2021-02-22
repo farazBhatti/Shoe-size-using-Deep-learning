@@ -9,7 +9,7 @@ Code takes folder containing image and height of the person
 `python3 inference.py -i images -ht 178`
 
 ![input image](https://github.com/farazBhatti/Shoe-size-using-Deep-learning/blob/master/images/side.png)
-![output](https://github.com/farazBhatti/Shoe-size-using-Deep-learning/blob/master/result/result.png)
+![output](https://github.com/farazBhatti/Shoe-size-using-Deep-learning/blob/master/result/side.png)
 ![foot length in cm](https://github.com/farazBhatti/Shoe-size-using-Deep-learning/blob/master/rawImgs/Screenshot.png)
 
 

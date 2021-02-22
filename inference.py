@@ -188,27 +188,20 @@ for img_name in os.listdir(args.input_dir):
     erosion = cv2.erode(mask,kernel,iterations = 1)
     res_ero = cv2.bitwise_and(img,img,mask = erosion)
 #
-#cv2.imshow("Side ",np.array(sidePose))
+#cv2.imshow("Mask",mask)
 ##
 #cv2.imshow("frontMask",frontMask)
 #cv2.imshow("SideMask",sideMask)
         
         
-#cv2.imwrite("frontPose.png",frontMask)
 #cv2.imwrite('sidePose.png',sideMask)
 #
 #
 #cv2.imshow("REs",res)
 #cv2.imshow("eroded Mask",res_ero)
-#
-#
-#cv2.waitKey(0)
 
 
-
-
-
-
+cv2.waitKey(0)
 # find contours in thresholded image, then grab the largest
 # one
 cnts = cv2.findContours(no_erosion.copy(), cv2.RETR_EXTERNAL,
@@ -224,30 +217,40 @@ extTop = tuple(c[c[:, :, 1].argmin()][0])
 extBot = tuple(c[c[:, :, 1].argmax()][0])
 
 
+extBotNew = extBot[0], extBot[1] -5
 
-height = math.hypot(extBot[0]-extBot[0], extBot[1]-extBot[1])
+
+body_cut = mask[extBotNew[1],:] 
+
+body_pix_index = np.where(body_cut == 255)
+  
+
+point = (body_pix_index[0][0], extBotNew[1])#
+
+
+height_pixel = math.hypot(extTop[0]-extBot[0], extTop[1]-extBot[1])
 
 foot_length = math.hypot(extBot[0]-extRight[0], extBot[1]-extRight[1])
 
-extRight = extRight[0] , extBot[1]
+foot_length = (args.height/height_pixel) * foot_length
 
-#cv2.arrowedLine( img, tuple(extTop), tuple(extBot) , (0,0,255), 2)
-cv2.arrowedLine( img, tuple(extBot), tuple(extRight) , (0,255,0), 2)
+extRightNew = extRight[0] , point[1]
 
+#cv2.arrowedLine( sidePose, tuple(extTop), tuple(extBot) , (0,0,255), 2)
+cv2.arrowedLine( sidePose, tuple(point), tuple(extRightNew) , (0,255,0), 2)
 
-
-# draw the outline of the object, then draw each of the
-# extreme points, where the left-most is red, right-most
-# is green, top-most is blue, and bottom-most is teal
-#cv2.drawContours(img, [c], -1, (0, 255, 255), 1)
-
-#cv2.circle(img, extRight, 4, (0, 255, 0), -1)
-#cv2.circle(img, extTop, 4, (255, 0, 0), -1)
-#cv2.circle(img, extBot, 4, (255, 255, 0), -1)
 # show the output image
-cv2.imshow("Image", img)
+cv2.imshow("res", sidePose)
+cv2.imshow("Mask", mask)
+
+ 
 cv2.waitKey(0)
+print('length of feet in cm = ', foot_length)
+#print('extBot point = ',extBot)
+#print('extreme left = ', extLeft)
+#
+#print('body pix index = ', body_pix_index)
+#print('Point = ', point)
+cv2.destroyAllWindows
 
-
-cv2.destroyAllWindows(0)
-
+cv2.imwrite("side.png",sidePose)

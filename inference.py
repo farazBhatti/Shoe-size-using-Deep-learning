@@ -187,18 +187,7 @@ for img_name in os.listdir(args.input_dir):
     
     erosion = cv2.erode(mask,kernel,iterations = 1)
     res_ero = cv2.bitwise_and(img,img,mask = erosion)
-#
-#cv2.imshow("Mask",mask)
-##
-#cv2.imshow("frontMask",frontMask)
-#cv2.imshow("SideMask",sideMask)
-        
-        
-#cv2.imwrite('sidePose.png',sideMask)
-#
-#
-#cv2.imshow("REs",res)
-#cv2.imshow("eroded Mask",res_ero)
+
 
 
 cv2.waitKey(0)
@@ -218,8 +207,6 @@ extBot = tuple(c[c[:, :, 1].argmax()][0])
 
 
 extBotNew = extBot[0], extBot[1] -5
-
-
 body_cut = mask[extBotNew[1],:] 
 
 body_pix_index = np.where(body_cut == 255)
@@ -252,5 +239,4 @@ print('length of feet in cm = ', foot_length)
 #print('body pix index = ', body_pix_index)
 #print('Point = ', point)
 cv2.destroyAllWindows
-
 cv2.imwrite("result/side.png",sidePose)

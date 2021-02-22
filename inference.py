@@ -237,7 +237,7 @@ foot_length = (args.height/height_pixel) * foot_length
 extRightNew = extRight[0] , point[1]
 
 #cv2.arrowedLine( sidePose, tuple(extTop), tuple(extBot) , (0,0,255), 2)
-cv2.arrowedLine( sidePose, tuple(point), tuple(extRightNew) , (0,255,0), 2)
+cv2.arrowedLine( sidePose, tuple(point), tuple(extRightNew) , (0,0,255), 2)
 
 # show the output image
 cv2.imshow("res", sidePose)

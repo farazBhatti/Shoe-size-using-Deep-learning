@@ -3,7 +3,7 @@
 Shoping online for shoes but dont know what your feet size is? This repo provides computer vision based solution to this problem. 
 
 
-## Inference
+## Demo
 Code takes folder containing image and height of the person
 
 `python3 demo.py -i images -ht 178`

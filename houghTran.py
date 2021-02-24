@@ -138,9 +138,9 @@ edges = cv2.Canny(gray, 20, 40)
 
 
 
-
-cv2.imshow("Binary Image", edges)
-cv2.waitKey()
+#
+#cv2.imshow("Binary Image", edges)
+#cv2.waitKey()
 
 # Detect lines
 lines = cv2.HoughLines(edges,1,np.pi/150,100)

@@ -61,63 +61,12 @@ class DeepLabModel(object):
 		seg_map = batch_seg_map[0]
 		return resized_image, seg_map
 
-def create_pascal_label_colormap():
-	"""Creates a label colormap used in PASCAL VOC segmentation benchmark.
-
-	Returns:
-	A Colormap for visualizing segmentation results.
-	"""
-	colormap = np.zeros((256, 3), dtype=int)
-	ind = np.arange(256, dtype=int)
-
-	for shift in reversed(range(8)):
-		for channel in range(3):
-		  colormap[:, channel] |= ((ind >> channel) & 1) << shift
-		ind >>= 3
-
-	return colormap
-
-def label_to_color_image(label):
-	"""Adds color defined by the dataset colormap to the label.
-
-	Args:
-	label: A 2D array with integer type, storing the segmentation label.
-
-	Returns:
-	result: A 2D array with floating type. The element of the array
-	  is the color indexed by the corresponding element in the input label
-	  to the PASCAL color map.
-
-	Raises:
-	ValueError: If label is not of rank 2 or its value is larger than color
-	  map maximum entry.
-	"""
-	if label.ndim != 2:
-		raise ValueError('Expect 2-D input label')
-
-	colormap = create_pascal_label_colormap()
-
-	if np.max(label) >= len(colormap):
-		raise ValueError('label value too large.')
-
-	return colormap[label]
-
 
 
 parser = argparse.ArgumentParser(description='Deeplab Segmentation')
 parser.add_argument('-i', '--input_dir', type=str, required=True,help='Directory to read Images. (required)')
 parser.add_argument('-ht', '--height', type=int, required=True,help='height of person. (required)')
 args=parser.parse_args()
-
-LABEL_NAMES = np.asarray([
-	'background', 'aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus',
-	'car', 'cat', 'chair', 'cow', 'diningtable', 'dog', 'horse', 'motorbike',
-	'person', 'pottedplant', 'sheep', 'sofa', 'train', 'tv'
-])
-
-FULL_LABEL_MAP = np.arange(len(LABEL_NAMES)).reshape(len(LABEL_NAMES), 1)
-FULL_COLOR_MAP = label_to_color_image(FULL_LABEL_MAP)
-
 
 MODEL_NAME = 'xception_coco_voctrainval'  # @param ['mobilenetv2_coco_voctrainaug', 'mobilenetv2_coco_voctrainval', 'xception_coco_voctrainaug', 'xception_coco_voctrainval']
 
@@ -168,11 +117,7 @@ for img_name in os.listdir(args.input_dir):
     res = cv2.bitwise_and(img,img,mask = mask)
     kernel = np.ones((3,5),np.uint8)
    
-    if 'feet' == os.path.splitext(img_name)[0]:
-        frontPose = img#res + (255 - cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR))
-        frontMask = cv2.erode(mask,kernel,iterations = 1)
-        
-    elif 'side' == os.path.splitext(img_name)[0]:
+    if 'side' == os.path.splitext(img_name)[0]:
         sidePose = img#res + (255 - cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR))
         sideMask = cv2.erode(mask,kernel,iterations = 1)
         no_erosion = mask
@@ -180,19 +125,14 @@ for img_name in os.listdir(args.input_dir):
         print("Error opening Image")
         sys.exit()
         
-        
-        
-
-       
     
     erosion = cv2.erode(mask,kernel,iterations = 1)
     res_ero = cv2.bitwise_and(img,img,mask = erosion)
 
 
 
-cv2.waitKey(0)
 # find contours in thresholded image, then grab the largest
-# one
+
 cnts = cv2.findContours(no_erosion.copy(), cv2.RETR_EXTERNAL,
 	cv2.CHAIN_APPROX_SIMPLE)
 cnts = imutils.grab_contours(cnts)
@@ -200,7 +140,6 @@ c = max(cnts, key=cv2.contourArea)
 
 
 # determine the most extreme points along the contour
-extLeft = tuple(c[c[:, :, 0].argmin()][0])
 extRight = tuple(c[c[:, :, 0].argmax()][0])
 extTop = tuple(c[c[:, :, 1].argmin()][0])
 extBot = tuple(c[c[:, :, 1].argmax()][0])
@@ -210,33 +149,22 @@ extBotNew = extBot[0], extBot[1] -5
 body_cut = mask[extBotNew[1],:] 
 
 body_pix_index = np.where(body_cut == 255)
-  
-
-point = (body_pix_index[0][0], extBotNew[1])#
+point = (body_pix_index[0][0], extBotNew[1])
 
 
 height_pixel = math.hypot(extTop[0]-extBot[0], extTop[1]-extBot[1])
-
 foot_length = math.hypot(extBot[0]-extRight[0], extBot[1]-extRight[1])
-
-foot_length = (args.height/height_pixel) * foot_length
 
 extRightNew = extRight[0] , point[1]
 
-#cv2.arrowedLine( sidePose, tuple(extTop), tuple(extBot) , (0,0,255), 2)
+foot_length = (args.height/height_pixel) * foot_length
+
 cv2.arrowedLine( sidePose, tuple(point), tuple(extRightNew) , (0,0,255), 2)
 
 # show the output image
 cv2.imshow("res", sidePose)
-cv2.imshow("Mask", mask)
 
- 
-cv2.waitKey(0)
 print('length of feet in cm = ', foot_length)
-#print('extBot point = ',extBot)
-#print('extreme left = ', extLeft)
-#
-#print('body pix index = ', body_pix_index)
-#print('Point = ', point)
+cv2.waitKey(0)
 cv2.destroyAllWindows
 cv2.imwrite("result/side.png",sidePose)

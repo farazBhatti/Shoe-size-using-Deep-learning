@@ -1,1 +1,1 @@
-python3 inference.py -i images -ht 178  
+python3 demo.py -i images -ht 178  

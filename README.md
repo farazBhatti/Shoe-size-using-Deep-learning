@@ -12,6 +12,7 @@ Code takes folder containing image and height of the person
 ![output](https://github.com/farazBhatti/Shoe-size-using-Deep-learning/blob/master/finalResult/side.png)
 ![foot length in cm](https://github.com/farazBhatti/Shoe-size-using-Deep-learning/blob/master/rawImgs/Screenshot.png)
 
+![](https://github.com/farazBhatti/Shoe-size-using-Deep-learning/blob/master/rawImgs/size%20chart.png)
 
 
 ## Acknowledgment

@@ -6,7 +6,7 @@ Shoping online for shoes but dont know what your feet size is? This repo provide
 ## Inference
 Code takes folder containing image and height of the person
 
-`python3 inference.py -i images -ht 178`
+`python3 demo.py -i images -ht 178`
 
 ![input image](https://github.com/farazBhatti/Shoe-size-using-Deep-learning/blob/master/images/side.png)
 
